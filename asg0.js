@@ -16,6 +16,25 @@ function main() {
   drawVector(v1, "red");
 }
 
+function angleBetween(v1, v2) {
+  const dot = v1.elements[0] * v2.elements[0] + v1.elements[1] * v2.elements[1];
+  const mag1 = Math.sqrt(v1.elements[0] ** 2 + v1.elements[1] ** 2);
+  const mag2 = Math.sqrt(v2.elements[0] ** 2 + v2.elements[1] ** 2);
+
+  if (mag1 === 0 || mag2 === 0) throw new Error("Cannot compute angle with zero-length vector");
+
+  const cosTheta = dot / (mag1 * mag2);
+  const angleRad = Math.acos(Math.min(Math.max(cosTheta, -1), 1)); // Clamp between -1 and 1 to prevent NaNs
+  return angleRad * (180 / Math.PI); // Convert to degrees
+}
+
+
+function areaTriangle(v1, v2) {
+  const cross = v1.elements[0] * v2.elements[1] - v1.elements[1] * v2.elements[0];
+  return Math.abs(cross) / 2;
+}
+
+
 function drawVector(v, color) {
   var canvas = document.getElementById('example');
   var ctx = canvas.getContext('2d');
@@ -80,13 +99,18 @@ function handleDrawOperationEvent() {
     const scalar = parseFloat(document.getElementById("scalar-input").value) || 1;
     if (scalar !== 1) {
       const v3 = v1.mul(scalar);
+      const v4 = v2.mul(scalar);
       drawVector(v3, "green");
+      drawVector(v4, "green");
     }
+  
   } else if (operation === "div") {
     const scalar = parseFloat(document.getElementById("scalar-input").value) || 1;
     if (scalar !== 1 && scalar !== 0) {
       const v3 = v1.div(scalar);
+      const v4 = v2.div(scalar);
       drawVector(v3, "green");
+      drawVector(v4, "green"); 
     }
   } else if (operation === "magnitude") {
     console.log(`Magnitude of v1: ${v1.magnitude().toFixed(2)}`);
